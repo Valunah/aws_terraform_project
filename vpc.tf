@@ -54,9 +54,9 @@ resource "aws_route_table" "public_route" {
   }
 }
 
-resource "aws_route_table_association" "pub_subnet_rt" {
-  subnet_id      = aws_subnet.public_subnet_1a.id
-  route_table_id = aws_route_table.public_route.id
+resource "aws_route_table_association" "pub_subnet_rtb" {
+ subnet_id      = aws_subnet.public_subnet_1a.id
+ route_table_id = aws_route_table.public_route.id
 
-  provider = aws.virigina
+provider = aws.virginia
 }

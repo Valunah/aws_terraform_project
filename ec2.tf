@@ -33,16 +33,7 @@ module "internet_facing_sg" {
   ]
 }
 
-resource "tls_private_key" "ec2_keypair" {
-    
-  algorithm = "ED25519"
-}
 
-resource "aws_key_pair" "ec2_keypair" {
-    provider = aws.virginia
-  key_name   = "ec2_keypair"
-  public_key = tls_private_key.ec2_keypair.public_key_openssh
-}
 
 data "aws_ami" "amazon_linux_2" {
   provider = aws.virginia
@@ -69,11 +60,13 @@ module "ec2_instance" {
 
   instance_type          = "t2.micro"
   ami                    = data.aws_ami.amazon_linux_2.id
-  key_name               = aws_key_pair.ec2_keypair.key_name
+  key_name               = "ec2-key"
   vpc_security_group_ids = [module.internet_facing_sg.security_group_id]
   subnet_id              = aws_subnet.public_subnet_1a.id
 
   create_spot_instance = true
   spot_price           = "0.60"
   spot_type            = "persistent"
+
+  associate_public_ip_address = true
 }
