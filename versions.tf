@@ -1,9 +1,20 @@
 terraform {
+  backend "s3" {
+    bucket         = "pneto-terraform-state-bucket"
+    key            = "pneto-project/terraform.tfstate"
+    region         = "us-east-1"
+    profile        = "pneto-training"
+    dynamodb_table = "pneto-project-tflock"
+  }
   required_providers {
     aws = {
       source                = "hashicorp/aws"
       version               = "~> 5.0"
       configuration_aliases = [aws.virginia]
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "4.0.4"
     }
   }
 
@@ -12,6 +23,7 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-  alias  = "virginia"
-  region = "us-east-1"
+  alias   = "virginia"
+  region  = "us-east-1"
+  profile = "pneto-training"
 }
