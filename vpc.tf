@@ -1,9 +1,7 @@
 module "vpc_prod" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.1.2"
-  providers = {
-    aws = aws.virginia
-  }
+
   cidr = "10.0.0.0/16"
   name = "my-vpc"
 
@@ -16,7 +14,7 @@ module "vpc_prod" {
 
 data "aws_availability_zones" "available" {
   state    = "available"
-  provider = aws.virginia
+  
 }
 
 resource "aws_subnet" "public_subnet_1a" {
@@ -24,7 +22,7 @@ resource "aws_subnet" "public_subnet_1a" {
   vpc_id            = module.vpc_prod.vpc_id
   availability_zone = data.aws_availability_zones.available.names[0]
 
-  provider = aws.virginia
+  
 
   cidr_block = "10.0.0.0/24"
 
@@ -39,7 +37,7 @@ resource "aws_subnet" "private_subnet_1a" {
   vpc_id            = module.vpc_prod.vpc_id
   availability_zone = data.aws_availability_zones.available.names[0]
 
-  provider = aws.virginia
+  
 
   cidr_block = "10.0.7.0/24"
 
@@ -52,7 +50,7 @@ resource "aws_subnet" "private_subnet_1a" {
 
 resource "aws_internet_gateway" "igw" {
   vpc_id   = module.vpc_prod.vpc_id
-  provider = aws.virginia
+  
   tags = {
     Name = "IGW-main"
   }
@@ -60,7 +58,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_route_table" "public_route" {
 
   vpc_id   = module.vpc_prod.vpc_id
-  provider = aws.virginia
+  
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
@@ -74,5 +72,5 @@ resource "aws_route_table_association" "pub_subnet_rtb" {
  subnet_id      = aws_subnet.public_subnet_1a.id
  route_table_id = aws_route_table.public_route.id
 
-  provider = aws.virginia
+  
 }

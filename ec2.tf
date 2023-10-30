@@ -1,7 +1,5 @@
 module "internet_facing_sg" {
-  providers = {
-    aws = aws.virginia
-  }
+
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "public-sg"
@@ -44,7 +42,6 @@ module "internet_facing_sg" {
 
 
 data "aws_ami" "amazon_linux_2" {
-  provider    = aws.virginia
   most_recent = true
 
   filter {
@@ -60,9 +57,7 @@ data "aws_ami" "amazon_linux_2" {
 }
 module "ec2_instance" {
 
-  providers = {
-    aws = aws.virginia
-  }
+
   source = "terraform-aws-modules/ec2-instance/aws"
   name   = "instance_devops"
 
@@ -71,10 +66,19 @@ module "ec2_instance" {
   key_name               = "ec2-key"
   vpc_security_group_ids = [module.internet_facing_sg.security_group_id]
   subnet_id              = aws_subnet.public_subnet_1a.id
+  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
 
   create_spot_instance = true
   spot_price           = "0.30"
   spot_type            = "persistent"
 
   associate_public_ip_address = true
+  
+  user_data_base64  = base64encode(var.user_data)
+  root_block_device = [ 
+    {
+      volume_type = "gp3"
+      volume_size = 8
+    }
+   ]
 }
