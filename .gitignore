@@ -1,6 +1,2 @@
 .terraform
-<<<<<<< HEAD
 *.pem
-=======
-ec2-key.pem
->>>>>>> 32c4ec0f821f23a3fbb904c3fb2e4a22cb8c93d5
