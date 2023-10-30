@@ -66,7 +66,7 @@ module "ec2_instance" {
   source = "terraform-aws-modules/ec2-instance/aws"
   name   = "instance_devops"
 
-  instance_type          = "t3.micro"
+  instance_type          = "t3a.micro"
   ami                    = data.aws_ami.amazon_linux_2.id
   key_name               = "ec2-key"
   vpc_security_group_ids = [module.internet_facing_sg.security_group_id]
