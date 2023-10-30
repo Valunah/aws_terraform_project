@@ -1,5 +1,5 @@
 module "internet_facing_sg" {
-    providers = {
+  providers = {
     aws = aws.virginia
   }
   source = "terraform-aws-modules/security-group/aws"
@@ -31,21 +31,20 @@ module "internet_facing_sg" {
       cidr_blocks = "0.0.0.0/0"
     }
   ]
+  egress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_block  = "0.0.0.0/0"
+      description = "Internet Access"
+    }
+  ]
 }
 
-resource "tls_private_key" "ec2_keypair" {
-    
-  algorithm = "ED25519"
-}
-
-resource "aws_key_pair" "ec2_keypair" {
-    provider = aws.virginia
-  key_name   = "ec2_keypair"
-  public_key = tls_private_key.ec2_keypair.public_key_openssh
-}
 
 data "aws_ami" "amazon_linux_2" {
-  provider = aws.virginia
+  provider    = aws.virginia
   most_recent = true
 
   filter {
@@ -67,13 +66,15 @@ module "ec2_instance" {
   source = "terraform-aws-modules/ec2-instance/aws"
   name   = "instance_devops"
 
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   ami                    = data.aws_ami.amazon_linux_2.id
-  key_name               = aws_key_pair.ec2_keypair.key_name
+  key_name               = "ec2-key"
   vpc_security_group_ids = [module.internet_facing_sg.security_group_id]
   subnet_id              = aws_subnet.public_subnet_1a.id
 
   create_spot_instance = true
-  spot_price           = "0.60"
+  spot_price           = "0.30"
   spot_type            = "persistent"
+
+  associate_public_ip_address = true
 }

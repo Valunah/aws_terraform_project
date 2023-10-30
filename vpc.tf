@@ -34,6 +34,22 @@ resource "aws_subnet" "public_subnet_1a" {
 
 }
 
+resource "aws_subnet" "private_subnet_1a" {
+
+  vpc_id            = module.vpc_prod.vpc_id
+  availability_zone = data.aws_availability_zones.available.names[0]
+
+  provider = aws.virginia
+
+  cidr_block = "10.0.7.0/24"
+
+  tags = {
+    Name = "private-subnet-1a"
+  }
+
+}
+
+
 resource "aws_internet_gateway" "igw" {
   vpc_id   = module.vpc_prod.vpc_id
   provider = aws.virginia
@@ -58,5 +74,5 @@ resource "aws_route_table_association" "pub_subnet_rt" {
   subnet_id      = aws_subnet.public_subnet_1a.id
   route_table_id = aws_route_table.public_route.id
 
-  provider = aws.virigina
+  provider = aws.virginia
 }
