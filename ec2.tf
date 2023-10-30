@@ -1,3 +1,10 @@
+locals {
+  user_data = <<-EOT
+    #!/bin/bash
+    echo "Hello Terraform!"
+    sudo dnf install git-all -y
+  EOT
+}
 module "internet_facing_sg" {
 
   source = "terraform-aws-modules/security-group/aws"
@@ -85,7 +92,7 @@ module "ec2_instance" {
 
   associate_public_ip_address = true
 
-  user_data_base64 = base64encode(var.user_data)
+  user_data_base64 = base64encode(local.user_data)
   root_block_device = [
     {
       volume_type = "gp3"
