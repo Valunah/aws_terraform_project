@@ -3,6 +3,8 @@ locals {
     #!/bin/bash
     echo "Hello Terraform!"
     sudo dnf install git-all -y
+    git config --global credential.helper '!aws codecommit credential-helper $@'
+    git config --global credential.UseHttpPath true
   EOT
 }
 module "internet_facing_sg" {
