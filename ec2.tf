@@ -80,7 +80,7 @@ module "ec2_instance" {
   name   = "instance-devops"
 
   instance_type          = "t3a.micro"
-  ami                    = data.aws_ami.amazon_linux_2023.id
+  ami                    = "ami-0759f51a90924c166"
   key_name               = "ec2-key"
   vpc_security_group_ids = [module.internet_facing_sg.security_group_id]
   subnet_id              = aws_subnet.public_subnet_1a.id
@@ -101,6 +101,7 @@ module "ec2_instance" {
   ]
 
   tags = {
-    Name = "instance-devops"
+    Name = "instance-devops",
+    Owner = "Pedro Neto"
   }
 }
