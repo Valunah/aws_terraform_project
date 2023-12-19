@@ -36,6 +36,14 @@ module "internet_facing_sg" {
       protocol    = "tcp"
       description = "SSH Access"
       cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = -1
+      to_port     = -1
+      protocol    = "icmp"
+      description = "Ping Access"
+      cidr_blocks = "0.0.0.0/0"
+    
     }
   ]
   egress_with_cidr_blocks = [
@@ -106,4 +114,10 @@ module "ec2_instance" {
     Name = "instance-devops",
     Owner = "Pedro Neto"
   }
+}
+
+resource "aws_ec2_tag" "ec2-name" {
+  resource_id = module.ec2_instance.id
+  key = "Name"
+  value = "instance-devops"
 }
