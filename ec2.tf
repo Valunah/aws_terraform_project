@@ -44,6 +44,14 @@ module "internet_facing_sg" {
       description = "Ping Access"
       cidr_blocks = "0.0.0.0/0"
     
+    },
+    {
+      from_port   = 3389
+      to_port     = 3389
+      protocol    = "tcp"
+      description = "Ping Access"
+      cidr_blocks = "0.0.0.0/0"
+    
     }
   ]
   egress_with_cidr_blocks = [
@@ -62,62 +70,97 @@ module "internet_facing_sg" {
 }
 
 #Use ec2 describe-images to grab the names
-data "aws_ami" "amazon_linux_2023" {
-  most_recent = true
+# data "aws_ami" "amazon_linux_2023" {
+#   most_recent = true
 
-  owners = ["amazon"]
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023*"]
-  }
+#   owners = ["amazon"]
+#   filter {
+#     name   = "name"
+#     values = ["al2023-ami-2023*"]
+#   }
 
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
+#   filter {
+#     name   = "architecture"
+#     values = ["x86_64"]
 
-  }
+#   }
 
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
+#   filter {
+#     name   = "root-device-type"
+#     values = ["ebs"]
+#   }
 
-}
-module "ec2_instance" {
+# }
+# module "ec2_instance" {
+
+  
+#   source = "terraform-aws-modules/ec2-instance/aws"
+#   name   = "instance-devops"
+
+#   instance_type          = "t3a.micro"
+#   ami                    = "ami-0759f51a90924c166"
+#   key_name               = "ec2-key"
+#   vpc_security_group_ids = [module.internet_facing_sg.security_group_id]
+#   subnet_id              = aws_subnet.public_subnet_1a.id
+#   iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
+
+#   create_spot_instance = true
+#   spot_price           = "0.01"
+#   spot_type            = "persistent"
+
+#   associate_public_ip_address = true
+
+#   user_data_base64 = base64encode(local.user_data)
+#   root_block_device = [
+#     {
+#       volume_type = "gp3"
+#       volume_size = 8
+#     }
+#   ]
+
+#   tags = {
+#     Name = "instance-devops",
+#     Owner = "Pedro Neto"
+#   }
+# }
+
+resource "aws_instance" "ec2_instance_ubuntu" {
 
 
-  source = "terraform-aws-modules/ec2-instance/aws"
-  name   = "instance-devops"
+  instance_type = "t3a.micro"
+  ami = "ami-0759f51a90924c166"
 
-  instance_type          = "t3a.micro"
-  ami                    = "ami-0759f51a90924c166"
   key_name               = "ec2-key"
   vpc_security_group_ids = [module.internet_facing_sg.security_group_id]
   subnet_id              = aws_subnet.public_subnet_1a.id
   iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
 
-  create_spot_instance = true
-  spot_price           = "0.30"
-  spot_type            = "persistent"
+  #user_data_base64 = local.user_data
+  instance_market_options {
+    market_type = "spot"
+    spot_options {
+            max_price = 0.017
+            # spot_instance_type = "persistent"
+    }
+  }
 
   associate_public_ip_address = true
 
-  user_data_base64 = base64encode(local.user_data)
-  root_block_device = [
-    {
+  root_block_device {
       volume_type = "gp3"
       volume_size = 8
     }
-  ]
+
 
   tags = {
-    Name = "instance-devops",
+    Name = "instance-ubuntu",
     Owner = "Pedro Neto"
   }
 }
 
-resource "aws_ec2_tag" "ec2-name" {
-  resource_id = module.ec2_instance.id
-  key = "Name"
-  value = "instance-devops"
-}
+# resource "aws_ec2_tag" "ec2-name" {
+#   resource_id = module.ec2_instance.id
+#   key = "Name"
+#   value = "instance-devops"
+# }
+
