@@ -3,7 +3,6 @@ terraform {
     bucket         = "pneto-terraform-state-bucket"
     key            = "pneto-project/terraform.tfstate"
     region         = "us-east-1"
-    profile        = "pneto-training"
     dynamodb_table = "pneto-project-tflock"
   }
   required_providers {
