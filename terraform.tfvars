@@ -1,2 +1,0 @@
-aws_access_key = "${env.AWS_ACCESS_KEY_ID}"
-aws_secret_key = "${env.AWS_SECRET_ACCESS_KEY}"
