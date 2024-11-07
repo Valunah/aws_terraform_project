@@ -12,7 +12,6 @@ terraform {
     }
   }
 
-  required_version = ">= 1.5.7"
 }
 
 # Configure the AWS Provider
